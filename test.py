@@ -1,25 +1,34 @@
+import json
+import random
+class User:
+    name=""
+    age=0
+    username=""
+    email=''
 
-def hash_password(password:str, encrypt_dict):
-    result=""
-    i=0
-    while i<len(password):
-        encrypted_letter = encrypt_dict[password[i]]
-        result= result + encrypted_letter
+    def __init__(self, name, email):
+        self.name=name
+        self.email=email
+
+    def __str__(self):
+        return self.name
+    
+
+    def get_age(self, age_range: list):
+         if age_range[0] < self.age <age_range[1]:
+              return True
+    
+
+users: list[User] =[]
+with open('names.json', 'r', encoding='utf-8') as file:
+        data = json.load(file)
+        for element in data:
+            user=User(name=element['first_name'], email=element['email'])
+
+            user.age=random.randint(15, 100)
+            users.append(user)
 
 
-        i += 1
-
-    return result
-
-
-encrypt_dict={
-    'a':'1',
-    'b':'2',
-    'c':'3',
-    'd':'4',
-    'e':'5'
-}
-
-hashed_password = hash_password('ade', encrypt_dict)
-
-print(hashed_password)
+for user in users:
+    if user.get_age([25, 45]):
+        print(user.email)
