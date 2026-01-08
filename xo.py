@@ -11,6 +11,21 @@ pygame.font.init()
 my_font = pygame.font.SysFont(None, 350)
 small_font = pygame.font.SysFont(None, 50)
 
+class Player:
+
+    sign="x"
+    def alternate(self, is_valid_x, is_valid_o, turn):
+        if turn%2==0 and not is_valid_o:
+                self.sign="x"
+                cell['x_checked']=True 
+        elif turn%2!=0 and not is_valid_x:
+                self.sign="o"
+                cell['o_checked']=True
+
+
+    def draw(self):
+        return f"{self.sign}_checked"
+
 cells=[
     {'start_pos':(0,0), 'end_pos': (190, 190), 'x_checked':False, 'o_checked': False},
     {'start_pos':(200, 0), 'end_pos': (390, 190), 'x_checked':False, 'o_checked': False},
@@ -38,6 +53,7 @@ combinations=[
 mouse=(0,0)
 turn = 0
 paused = False
+player=Player()
 while running:
     # print(cells)
     # poll for events
@@ -59,10 +75,10 @@ while running:
     for cell in cells:
         pygame.draw.rect(screen, 'white', (cell['start_pos'][0], cell['start_pos'][1], 190, 190))
         if cell['start_pos'][0]<mouse[0]<cell['end_pos'][0] and cell['start_pos'][1]<mouse[1]<cell['end_pos'][1]:
-            if turn%2==0 and cell['o_checked']==False:
-                cell['x_checked']=True 
-            elif turn%2!=0 and cell['x_checked']==False:
-                cell['o_checked']=True
+            player.alternate(cell['x_checked'], cell['o_checked'], turn)
+            cell[player.draw()]=True
+            
+
         
         if cell['x_checked']:
             text_surface = my_font.render('X', False, 'black')
