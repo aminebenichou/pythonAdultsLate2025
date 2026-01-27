@@ -24,7 +24,18 @@ class Player:
         elif self.sign=="o" and not is_valid_x:
             self.sign='x'
 
+    def get_winner(self, cells):
+        for comb in combinations:
+            if cells[comb[0]]['x_checked'] and cells[comb[1]]['x_checked'] and cells[comb[2]]['x_checked']:
+                text_surface=small_font.render('X WON', False, 'red')
+                screen.blit(text_surface, (300, 300))
+                return True
+            elif cells[comb[0]]['o_checked'] and cells[comb[1]]['o_checked'] and cells[comb[2]]['o_checked']:
+                text_surface=small_font.render('O WON', False, 'red')
+                screen.blit(text_surface, (300, 300))
+                return True
             
+        return False
 
     def draw(self):
         return f"{self.sign}_checked"
@@ -80,10 +91,10 @@ while running:
 
     if player.sign == None:
         pygame.draw.rect(screen, 'black', (100, 200, 150, 150))
-        x= small_font.render('X', False, 'white')
+        x= small_font.render('O', False, 'white')
         screen.blit(x, (150, 250))
         pygame.draw.rect(screen, 'black', (300, 200, 150, 150))
-        o= small_font.render('O', False, 'white')
+        o= small_font.render('X', False, 'white')
         screen.blit(o, (350, 250))
 
 
@@ -119,15 +130,19 @@ while running:
                 text_surface = my_font.render('O', False, 'black')
                 screen.blit(text_surface, (cell['start_pos'][0]+10, cell['start_pos'][1]))
 
-        for comb in combinations:
-            if cells[comb[0]]['x_checked'] and cells[comb[1]]['x_checked'] and cells[comb[2]]['x_checked']:
-                text_surface=small_font.render('X WON', False, 'red')
-                screen.blit(text_surface, (300, 300))
-                paused=True
-            elif cells[comb[0]]['o_checked'] and cells[comb[1]]['o_checked'] and cells[comb[2]]['o_checked']:
-                text_surface=small_font.render('O WON', False, 'red')
-                screen.blit(text_surface, (300, 300))
-                paused=True
+
+    
+        paused = player.get_winner(cells)
+
+        # for comb in combinations:
+        #     if cells[comb[0]]['x_checked'] and cells[comb[1]]['x_checked'] and cells[comb[2]]['x_checked']:
+        #         text_surface=small_font.render('X WON', False, 'red')
+        #         screen.blit(text_surface, (300, 300))
+        #         paused=True
+        #     elif cells[comb[0]]['o_checked'] and cells[comb[1]]['o_checked'] and cells[comb[2]]['o_checked']:
+        #         text_surface=small_font.render('O WON', False, 'red')
+        #         screen.blit(text_surface, (300, 300))
+        #         paused=True
 
     # flip() the display to put your work on screen
     pygame.display.flip()
