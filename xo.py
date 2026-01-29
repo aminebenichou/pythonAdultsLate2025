@@ -3,25 +3,28 @@ import pygame
 
 # pygame setup
 pygame.init()
-screen = pygame.display.set_mode((600, 600))
+screen = pygame.display.set_mode((600, 700))
 clock = pygame.time.Clock()
 running = True
 
 pygame.font.init()
 my_font = pygame.font.SysFont(None, 350)
 small_font = pygame.font.SysFont(None, 50)
+exit_btn_color='black'
+reset_btn_color='black'
 
 class Player:
 
     sign=None
+    initial_sign=None
 
     def choose_sign(self, choice):
         self.sign = choice
 
     def alternate(self, is_valid_x, is_valid_o, turn):
-        if self.sign=="x" and not is_valid_o:
+        if self.sign=="x" and (not is_valid_o):
             self.sign='o'
-        elif self.sign=="o" and not is_valid_x:
+        elif self.sign=="o" and (not is_valid_x):
             self.sign='x'
 
     def get_winner(self, cells):
@@ -77,6 +80,16 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
+        if 0<pygame.mouse.get_pos()[0]<200 and 600<pygame.mouse.get_pos()[1]<700:
+            exit_btn_color='white'
+        else:
+            exit_btn_color='black'
+
+        if 450<pygame.mouse.get_pos()[0]<650 and 600<pygame.mouse.get_pos()[1]<700:
+            reset_btn_color='white'
+        else:
+            reset_btn_color='black'
+
         if event.type == pygame.MOUSEBUTTONDOWN and not paused:
             clicks += 1
             print(clicks)
@@ -100,17 +113,21 @@ while running:
 
         if 100<mouse[0]<250  and 200<mouse[1]<350:
             player.choose_sign('x')
+            player.initial_sign="x"
             print('mouse: ', mouse)
             mouse=(0, 0)
 
         elif 300<mouse[0]<450 and 200<mouse[1]<350:
             player.choose_sign('o')
+            player.initial_sign="o"
+            
             print('mouse: ', mouse)
             mouse=(0, 0)
 
 
-        
+    
     else:
+        
         # RENDER YOUR GAME HERE
         for cell in cells:
             pygame.draw.rect(screen, 'white', (cell['start_pos'][0], cell['start_pos'][1], 190, 190))
@@ -118,7 +135,8 @@ while running:
                 print("drawing launched")
                 print(cell)
                 player.alternate(cell['x_checked'], cell['o_checked'], turn)
-                cell[player.draw()]=True
+                if (player.sign=="x" and not cell['o_checked']) or (player.sign=="o" and not cell['x_checked']):
+                    cell[player.draw()]=True 
                 print(cell)
                 mouse=(0,0)
 
@@ -133,7 +151,18 @@ while running:
 
     
         paused = player.get_winner(cells)
+        reset = small_font.render('Reset', False, reset_btn_color)
+        screen.blit(reset, (500, 650))
+        if 500<mouse[0]<600 and 600<mouse[1]<700 :
+            for cell in cells:
+                cell['x_checked']=False
+                cell['o_checked']=False
+                player.sign=player.initial_sign
 
+        reset = small_font.render('Exit', False, exit_btn_color)
+        screen.blit(reset, (20, 650))
+        if 0<mouse[0]<200 and 600<mouse[1]<700 :
+            running=False
         # for comb in combinations:
         #     if cells[comb[0]]['x_checked'] and cells[comb[1]]['x_checked'] and cells[comb[2]]['x_checked']:
         #         text_surface=small_font.render('X WON', False, 'red')
